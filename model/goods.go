@@ -9,9 +9,14 @@ type Goods struct {
 	GoodsNum   int
 }
 
-func (g *Goods) Create(goods Goods) (Goods, error) {
-	err := db.Model(g).Create(&goods).Error
-	return goods, err
+func NewGoods() *Goods {
+	return new(Goods)
+}
+
+func (g *Goods) Create(goods Goods) (info *Goods, err error) {
+	err = db.Model(g).Create(&goods).Error
+	info = &goods
+	return info, err
 }
 
 func (g *Goods) Delete(id int) error {
@@ -19,14 +24,16 @@ func (g *Goods) Delete(id int) error {
 	return err
 }
 
-func (g *Goods) Upload(id int) (Goods, error) {
+func (g *Goods) Upload(id int) (info *Goods, err error) {
 	var goods Goods
-	err := db.Model(g).Where("id = ?", id).Delete(g).Error
-	return goods, err
+	err = db.Model(g).Where("id = ?", id).Delete(g).Error
+	info = &goods
+	return info, err
 }
 
-func (g *Goods) Get(id int) (Goods, error) {
+func (g *Goods) Get(id int) (info *Goods, err error) {
 	var goods Goods
-	err := db.Model(g).Where("id = ?", id).First(&goods).Error
-	return goods, err
+	err = db.Model(g).Where("id = ?", id).First(&goods).Error
+	info = &goods
+	return info, err
 }
