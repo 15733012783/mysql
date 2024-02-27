@@ -1,6 +1,9 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"github.com/15733012783/proto"
+	"gorm.io/gorm"
+)
 
 type Goods struct {
 	gorm.Model
@@ -13,9 +16,8 @@ func NewGoods() *Goods {
 	return new(Goods)
 }
 
-func (g *Goods) Create(goods Goods) (info *Goods, err error) {
+func (g *Goods) Create(goods Goods) (info *proto.GoodsInfo, err error) {
 	err = db.Model(g).Create(&goods).Error
-	info = &goods
 	return info, err
 }
 
@@ -24,16 +26,13 @@ func (g *Goods) Delete(id int) error {
 	return err
 }
 
-func (g *Goods) Upload(id int) (info *Goods, err error) {
-	var goods Goods
-	err = db.Model(g).Where("id = ?", id).Delete(g).Error
-	info = &goods
-	return info, err
+func (g *Goods) Upload(goods Goods) (info Goods, err error) {
+	err = db.Model(g).Where("id = ?", goods.ID).Updates(goods).Error
+	return goods, err
 }
 
-func (g *Goods) Get(id int) (info *Goods, err error) {
+func (g *Goods) Get(id int) (info *proto.GoodsInfo, err error) {
 	var goods Goods
 	err = db.Model(g).Where("id = ?", id).First(&goods).Error
-	info = &goods
 	return info, err
 }
