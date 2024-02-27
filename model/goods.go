@@ -31,8 +31,8 @@ func (g *Goods) Upload(goods Goods) (info Goods, err error) {
 	return goods, err
 }
 
-func (g *Goods) Get(id int) (info *proto.GoodsInfo, err error) {
+func (g *Goods) Get(goodsName string) (info *proto.GoodsInfo, err error) {
 	var goods Goods
-	err = db.Model(g).Where("id = ?", id).First(&goods).Error
+	err = db.Model(g).Where("goods_name = ?", goodsName).First(&goods).Error
 	return info, err
 }
