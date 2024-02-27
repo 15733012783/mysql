@@ -1,7 +1,6 @@
 package model
 
 import (
-	"github.com/15733012783/proto"
 	"gorm.io/gorm"
 )
 
@@ -16,8 +15,9 @@ func NewGoods() *Goods {
 	return new(Goods)
 }
 
-func (g *Goods) Create(goods Goods) (info *proto.GoodsInfo, err error) {
+func (g *Goods) Create(goods *Goods) (info *Goods, err error) {
 	err = db.Model(g).Create(&goods).Error
+	info = goods
 	return info, err
 }
 
@@ -26,13 +26,13 @@ func (g *Goods) Delete(id int) error {
 	return err
 }
 
-func (g *Goods) Upload(goods Goods) (info Goods, err error) {
+func (g *Goods) Upload(goods *Goods) (info *Goods, err error) {
 	err = db.Model(g).Where("id = ?", goods.ID).Updates(goods).Error
 	return goods, err
 }
 
-func (g *Goods) Get(goodsName string) (info *proto.GoodsInfo, err error) {
-	var goods Goods
-	err = db.Model(g).Where("goods_name = ?", goodsName).First(&goods).Error
+func (g *Goods) Get(goodsName string) (info *Goods, err error) {
+	info = new(Goods)
+	err = db.Model(g).Where("goods_name = ?", goodsName).First(&info).Error
 	return info, err
 }
