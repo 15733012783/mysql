@@ -14,7 +14,7 @@ func InitMysql() {
 	if err != nil {
 		panic(err)
 	}
-	err = db.AutoMigrate(new(User))
+	err = db.AutoMigrate(new(User), new(Goods))
 	if err != nil {
 		return
 	}
