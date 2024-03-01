@@ -6,9 +6,9 @@ import (
 
 type Goods struct {
 	gorm.Model
-	GoodsName  string
-	GoodsPrice float64
-	GoodsNum   int
+	GoodsName  string  `gorm:"index"`
+	GoodsPrice float64 `gorm:"decimal(10,2)"`
+	GoodsNum   int     `gorm:"tinyint"`
 }
 
 func NewGoods() *Goods {
