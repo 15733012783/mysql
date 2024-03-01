@@ -6,6 +6,7 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/clients"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/vo"
+	"gopkg.in/yaml.v2"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -54,13 +55,14 @@ func NaCosConfig(IpAddr, Scheme, Group, DataId string, Port int) {
 	if err != nil {
 		return
 	}
+	json.Unmarshal([]byte(config), &NaCosT)
+	yaml.Unmarshal([]byte(config), &NaCosT)
 	//Listen config change,key=dataId+group+namespaceId.
 	err = client.ListenConfig(vo.ConfigParam{
 		DataId: "test-data",
 		Group:  "test-group",
 		OnChange: func(namespace, group, dataId, data string) {
 			fmt.Println("config changed group:" + group + ", dataId:" + dataId + ", content:" + data)
-			json.Unmarshal([]byte(config), &NaCosT)
 			dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", NaCosT.Username,
 				NaCosT.Password, NaCosT.Host, NaCosT.Port, NaCosT.Mysqlbase)
 			updateDbConnection(dsn)
