@@ -24,10 +24,9 @@ type T struct {
 var NaCosT T
 var client config_client.IConfigClient
 
-func NaCosConfig(IpAddr, Scheme, Group, DataId string, Port int) {
-	//create clientConfig
+func NaCosConfig(Group, DataId string, Port int) {
 	clientConfig := constant.ClientConfig{
-		NamespaceId:         "", //we can create multiple clients with different namespaceId to support multiple namespace.When namespace is public, fill in the blank string here.
+		NamespaceId:         "",
 		TimeoutMs:           5000,
 		NotLoadCacheAtStart: true,
 		LogDir:              "/tmp/nacos/log",
@@ -36,13 +35,12 @@ func NaCosConfig(IpAddr, Scheme, Group, DataId string, Port int) {
 	}
 	serverConfigs := []constant.ServerConfig{
 		{
-			IpAddr:      IpAddr,
+			IpAddr:      "127.0.0.1",
 			ContextPath: "/nacos",
-			Port:        uint64(Port),
-			Scheme:      Scheme,
+			Port:        80,
+			Scheme:      "http",
 		},
 	}
-	// Create config client for dynamic configuration
 	client, err = clients.CreateConfigClient(map[string]interface{}{
 		"serverConfigs": serverConfigs,
 		"clientConfig":  clientConfig,
@@ -50,11 +48,11 @@ func NaCosConfig(IpAddr, Scheme, Group, DataId string, Port int) {
 	if err != nil {
 		return
 	}
-	config, err2 := client.GetConfig(vo.ConfigParam{
+	config, err3 := client.GetConfig(vo.ConfigParam{
 		DataId: Group,
 		Group:  DataId,
 	})
-	if err2 != nil {
+	if err3 != nil {
 		return
 	}
 	json.Unmarshal([]byte(config), &NaCosT)
