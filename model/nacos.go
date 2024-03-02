@@ -34,7 +34,7 @@ func NaCosConfig(Group, DataId string, Port int) {
 		{
 			IpAddr:      "127.0.0.1",
 			ContextPath: "/nacos",
-			Port:        80,
+			Port:        8848,
 			Scheme:      "http",
 		},
 	}
@@ -46,8 +46,8 @@ func NaCosConfig(Group, DataId string, Port int) {
 		return
 	}
 	config, err3 := client.GetConfig(vo.ConfigParam{
-		DataId: Group,
-		Group:  DataId,
+		DataId: DataId,
+		Group:  Group,
 	})
 	if err3 != nil {
 		return
