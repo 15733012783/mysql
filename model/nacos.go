@@ -24,7 +24,7 @@ type T struct {
 var NaCosT T
 var client config_client.IConfigClient
 
-func NaCosConfig(IpAddr, Scheme, Group, DataId string, Port int) {
+func NaCosConfig(IpAddr, Scheme string, Port int) {
 	//create clientConfig
 	clientConfig := constant.ClientConfig{
 		NamespaceId:         "", //we can create multiple clients with different namespaceId to support multiple namespace.When namespace is public, fill in the blank string here.

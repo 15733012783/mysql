@@ -17,13 +17,9 @@ func InItMysql() {
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})
-	MysqlDate()
-}
-
-func MysqlDate() {
 	err := db.AutoMigrate(new(User))
 	if err != nil {
-		log.Println(err)
+		log.Println(err, "**********************AutoMigrate")
 		return
 	}
 }
