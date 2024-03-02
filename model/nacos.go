@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/nacos-group/nacos-sdk-go/clients"
+	"github.com/nacos-group/nacos-sdk-go/clients/config_client"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/vo"
 	"gopkg.in/yaml.v2"
@@ -21,6 +22,7 @@ type T struct {
 }
 
 var NaCosT T
+var client config_client.IConfigClient
 
 func NaCosConfig(IpAddr, Scheme, Group, DataId string, Port int) {
 	//create clientConfig
@@ -41,33 +43,26 @@ func NaCosConfig(IpAddr, Scheme, Group, DataId string, Port int) {
 		},
 	}
 	// Create config client for dynamic configuration
-	client, err := clients.CreateConfigClient(map[string]interface{}{
+	client, err = clients.CreateConfigClient(map[string]interface{}{
 		"serverConfigs": serverConfigs,
 		"clientConfig":  clientConfig,
 	})
 	if err != nil {
 		return
 	}
+}
+
+func GetConfig(Group, DataId string) (string, error) {
 	config, err := client.GetConfig(vo.ConfigParam{
 		DataId: Group,
 		Group:  DataId,
 	})
 	if err != nil {
-		return
+		return "", nil
 	}
 	json.Unmarshal([]byte(config), &NaCosT)
 	yaml.Unmarshal([]byte(config), &NaCosT)
-	//Listen config change,key=dataId+group+namespaceId.
-	err = client.ListenConfig(vo.ConfigParam{
-		DataId: "test-data",
-		Group:  "test-group",
-		OnChange: func(namespace, group, dataId, data string) {
-			fmt.Println("config changed group:" + group + ", dataId:" + dataId + ", content:" + data)
-			dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", NaCosT.Username,
-				NaCosT.Password, NaCosT.Host, NaCosT.Port, NaCosT.Mysqlbase)
-			updateDbConnection(dsn)
-		},
-	})
+	return config, nil
 }
 
 func updateDbConnection(config string) {
@@ -81,4 +76,18 @@ func updateDbConnection(config string) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func ListenConfig() {
+	//Listen config change,key=dataId+group+namespaceId.
+	err = client.ListenConfig(vo.ConfigParam{
+		DataId: "test-data",
+		Group:  "test-group",
+		OnChange: func(namespace, group, dataId, data string) {
+			fmt.Println("config changed group:" + group + ", dataId:" + dataId + ", content:" + data)
+			dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", NaCosT.Username,
+				NaCosT.Password, NaCosT.Host, NaCosT.Port, NaCosT.Mysqlbase)
+			updateDbConnection(dsn)
+		},
+	})
 }
