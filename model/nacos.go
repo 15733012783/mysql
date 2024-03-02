@@ -24,7 +24,7 @@ type T struct {
 var NaCosT T
 var client config_client.IConfigClient
 
-func NaCosConfig(IpAddr, Scheme string, Port int) {
+func NaCosConfig(IpAddr, Scheme, Group, DataId string, Port int) {
 	//create clientConfig
 	clientConfig := constant.ClientConfig{
 		NamespaceId:         "", //we can create multiple clients with different namespaceId to support multiple namespace.When namespace is public, fill in the blank string here.
@@ -50,19 +50,15 @@ func NaCosConfig(IpAddr, Scheme string, Port int) {
 	if err != nil {
 		return
 	}
-}
-
-func GetConfig(Group, DataId string) (string, error) {
-	config, err := client.GetConfig(vo.ConfigParam{
+	config, err2 := client.GetConfig(vo.ConfigParam{
 		DataId: Group,
 		Group:  DataId,
 	})
-	if err != nil {
-		return "", nil
+	if err2 != nil {
+		return
 	}
 	json.Unmarshal([]byte(config), &NaCosT)
 	yaml.Unmarshal([]byte(config), &NaCosT)
-	return config, nil
 }
 
 func updateDbConnection(config string) {
