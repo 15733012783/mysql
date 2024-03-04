@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"gorm.io/gorm"
 )
 
@@ -41,7 +42,11 @@ func (g *Goods) Get(goodsName string) (info *Goods, err error) {
 func (g *Goods) UploadFile(id int, FileName string) (info *Goods, err error) {
 	info = new(Goods)
 	err = db.Model(g).Where("id = ?", id).First(info).Error
+	fmt.Println("**********************************************info")
+	fmt.Println(info)
 	info.GoodsPhoto = FileName
 	err = db.Model(g).Save(info).Error
+	fmt.Println("**********************************************info")
+	fmt.Println(info)
 	return info, err
 }
