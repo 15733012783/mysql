@@ -2,10 +2,13 @@ package nacos
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/nacos-group/nacos-sdk-go/clients"
+	"github.com/nacos-group/nacos-sdk-go/clients/config_client"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/vo"
 	"gopkg.in/yaml.v2"
+	"log"
 )
 
 type T struct {
@@ -53,16 +56,19 @@ func NaCosConfig(Group, DataId string, Port int) {
 	yaml.Unmarshal([]byte(config), &NaCosT)
 }
 
-//func ListenConfig() {
-//	//Listen config change,key=dataId+group+namespaceId.
-//	err = client.ListenConfig(vo.ConfigParam{
-//		DataId: "test-data",
-//		Group:  "test-group",
-//		OnChange: func(namespace, group, dataId, data string) {
-//			fmt.Println("config changed group:" + group + ", dataId:" + dataId + ", content:" + data)
-//			dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", NaCosT.Username,
-//				NaCosT.Password, NaCosT.Host, NaCosT.Port, NaCosT.Mysqlbase)
-//			updateDbConnection(dsn)
-//		},
-//	})
-//}
+func ListenConfig(client config_client.IConfigClient) {
+	//Listen config change,key=dataId+group+namespaceId.
+	err := client.ListenConfig(vo.ConfigParam{
+		DataId: "test-data",
+		Group:  "test-group",
+		OnChange: func(namespace, group, dataId, data string) {
+			fmt.Println("config changed group:" + group + ", dataId:" + dataId + ", content:" + data)
+			//dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", NaCosT.Username,
+			//	NaCosT.Password, NaCosT.Host, NaCosT.Port, NaCosT.Mysqlbase)
+			//updateDbConnection(dsn)
+		},
+	})
+	if err != nil {
+		log.Println(err)
+	}
+}

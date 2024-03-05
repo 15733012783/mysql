@@ -52,6 +52,7 @@ func SonSul() {
 
 func GetClient(serverName string) (string, int, error) {
 	name, data, err := ConSuLClient.Agent().AgentHealthServiceByName(serverName)
+	fmt.Println(name, data, "//***********************************")
 	if name != "passing" {
 		log.Println("获取consul服务发现失败！", err)
 		return "", 0, nil
