@@ -59,20 +59,19 @@ func GetClient(serverName string) (*grpc.ClientConn, error) {
 		fmt.Printf("api.NewClient failed, err:%v\n", err)
 		return nil, err
 	}
-	// 返回的是一个 map[string]*api.AgentService
-	// 其中key是服务ID，值是注册的服务信息
-	serviceMap, err := cc.Agent().ServicesWithFilter("Service==`hello`")
-	if err != nil {
-		fmt.Printf("query service from consul failed, err:%v\n", err)
+
+	serviceMap, date, err := cc.Agent().AgentHealthServiceByName(serverName)
+	if serviceMap != "passing" {
+		log.Println("获取consul服务发现失败！", err)
 		return nil, err
 	}
 	// 选一个服务机（这里选最后一个）
 	var addr string
-	for k, v := range serviceMap {
-		fmt.Printf("%s:%#v\n", k, v)
-		addr = v.Address + ":" + strconv.Itoa(v.Port)
+	for _, v := range date {
+		fmt.Println(v, "**********************************")
+		addr = v.Service.Address + ":" + strconv.Itoa(v.Service.Port)
 	}
-	fmt.Println(addr, "*************************************")
+	fmt.Println(addr, "**********************************")
 	// 建立RPC连接
 	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
