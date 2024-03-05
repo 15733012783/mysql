@@ -21,8 +21,8 @@ func SonSul() {
 		ID:      uuid.NewString(),
 		Name:    "test",
 		Tags:    []string{"GRPC"},
-		Port:    3305,
-		Address: "127.0.0.1",
+		Port:    8081,
+		Address: "10.2.171.70",
 	})
 
 	check := &api.AgentServiceCheck{
