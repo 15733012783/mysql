@@ -5,7 +5,10 @@ import (
 	"github.com/google/uuid"
 	"github.com/hashicorp/consul/api"
 	"go.uber.org/zap"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"log"
+	"strconv"
 )
 
 var ConSuLClient *api.Client
@@ -50,19 +53,31 @@ func SonSul() {
 	}
 }
 
-func GetClient(serverName string) (string, int, error) {
-	name, data, err := ConSuLClient.Agent().AgentHealthServiceByName(serverName)
-	fmt.Println(name, data, "//***********************************")
-	if name != "passing" {
-		log.Println("获取consul服务发现失败！", err)
-		return "", 0, nil
+func GetClient(serverName string) (*grpc.ClientConn, error) {
+	cc, err := api.NewClient(api.DefaultConfig())
+	if err != nil {
+		fmt.Printf("api.NewClient failed, err:%v\n", err)
+		return nil, err
 	}
-	var Address string
-	var Port int
-	for _, val := range data {
-		Address = val.Service.Address
-		Port = val.Service.Port
+	// 返回的是一个 map[string]*api.AgentService
+	// 其中key是服务ID，值是注册的服务信息
+	serviceMap, err := cc.Agent().ServicesWithFilter("Service==`hello`")
+	if err != nil {
+		fmt.Printf("query service from consul failed, err:%v\n", err)
+		return nil, err
 	}
-	log.Println("端口：lianjie", Address, Port)
-	return Address, Port, nil
+	// 选一个服务机（这里选最后一个）
+	var addr string
+	for k, v := range serviceMap {
+		fmt.Printf("%s:%#v\n", k, v)
+		addr = v.Address + ":" + strconv.Itoa(v.Port)
+	}
+
+	// 建立RPC连接
+	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("grpc.Dial failed,err:%v", err)
+		return nil, err
+	}
+	return conn, err
 }
