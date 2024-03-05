@@ -1,4 +1,4 @@
-package model
+package nacos
 
 import (
 	"encoding/json"
@@ -6,9 +6,6 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/vo"
 	"gopkg.in/yaml.v2"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
 type T struct {
@@ -54,19 +51,6 @@ func NaCosConfig(Group, DataId string, Port int) {
 	}
 	json.Unmarshal([]byte(config), &NaCosT)
 	yaml.Unmarshal([]byte(config), &NaCosT)
-}
-
-func updateDbConnection(config string) {
-	s, _ := db.DB()
-	if s != nil {
-		s.Close()
-	}
-	db, err = gorm.Open(mysql.Open(config), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
-	})
-	if err != nil {
-		panic(err)
-	}
 }
 
 //func ListenConfig() {

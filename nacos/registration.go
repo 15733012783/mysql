@@ -1,4 +1,4 @@
-package model
+package nacos
 
 import (
 	"log"
