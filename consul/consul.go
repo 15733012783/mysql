@@ -68,10 +68,9 @@ func GetClient(serverName string) (*grpc.ClientConn, error) {
 	// 选一个服务机（这里选最后一个）
 	var addr string
 	for _, v := range date {
-		fmt.Println(v, "**********************************")
 		addr = v.Service.Address + ":" + strconv.Itoa(v.Service.Port)
 	}
-	fmt.Println(addr, "**********************************")
+	fmt.Println(addr)
 	// 建立RPC连接
 	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {

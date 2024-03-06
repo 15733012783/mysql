@@ -20,6 +20,7 @@ type T struct {
 }
 
 var NaCosT T
+var success bool
 
 func NaCosConfig(Group, DataId string, Port int) {
 	clientConfig := constant.ClientConfig{
@@ -54,6 +55,78 @@ func NaCosConfig(Group, DataId string, Port int) {
 	}
 	json.Unmarshal([]byte(config), &NaCosT)
 	yaml.Unmarshal([]byte(config), &NaCosT)
+	namingClient, err := clients.NewNamingClient(
+		vo.NacosClientParam{
+			ClientConfig:  &clientConfig,
+			ServerConfigs: serverConfigs,
+		},
+	)
+	success, err = namingClient.RegisterInstance(vo.RegisterInstanceParam{
+		Ip:          "127.0.0.1",
+		Port:        8081,
+		ServiceName: "demo.go",
+		Weight:      10,
+		Enable:      true,
+		Healthy:     true,
+		Ephemeral:   true,
+		Metadata:    map[string]string{"idc": "shanghai"},
+		ClusterName: "cluster-a", // 默认值DEFAULT
+		GroupName:   "group-a",   // 默认值DEFAULT_GROUP
+	})
+}
+
+func NaocsServiceDiscovery(Group, DataId string) {
+	clientConfig := constant.ClientConfig{
+		NamespaceId:         "",
+		TimeoutMs:           5000,
+		NotLoadCacheAtStart: true,
+		LogDir:              "/tmp/nacos/log",
+		CacheDir:            "/tmp/nacos/cache",
+		LogLevel:            "debug",
+	}
+	serverConfigs := []constant.ServerConfig{
+		{
+			IpAddr:      "127.0.0.1",
+			ContextPath: "/nacos",
+			Port:        8848,
+			Scheme:      "http",
+		},
+	}
+	client, err := clients.CreateConfigClient(map[string]interface{}{
+		"serverConfigs": serverConfigs,
+		"clientConfig":  clientConfig,
+	})
+	if err != nil {
+		return
+	}
+	config, err3 := client.GetConfig(vo.ConfigParam{
+		DataId: DataId,
+		Group:  Group,
+	})
+	if err3 != nil {
+		return
+	}
+	json.Unmarshal([]byte(config), &NaCosT)
+	yaml.Unmarshal([]byte(config), &NaCosT)
+	namingClient, err := clients.NewNamingClient(
+		vo.NacosClientParam{
+			ClientConfig:  &clientConfig,
+			ServerConfigs: serverConfigs,
+		},
+	)
+	// SelectAllInstance可以返回全部实例列表,包括healthy=false,enable=false,weight<=0
+	instances, err := namingClient.SelectAllInstances(vo.SelectAllInstancesParam{
+		ServiceName: "demo.go",
+		GroupName:   "group-a",             // 默认值DEFAULT_GROUP
+		Clusters:    []string{"cluster-a"}, // 默认值DEFAULT
+	})
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	for i, v := range instances {
+		fmt.Println(i, v, "********************************")
+	}
 }
 
 func ListenConfig(client config_client.IConfigClient) {
