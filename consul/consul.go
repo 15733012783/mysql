@@ -19,7 +19,7 @@ func SonSul() {
 	if err != nil {
 		return
 	}
-	api.DefaultConfig().Address = fmt.Sprintf("%s:%d", "127.0.0.1", 8500)
+	api.DefaultConfig().Address = fmt.Sprintf("%s:%d", "10.2.171.70", 8500)
 	err = ConSuLClient.Agent().ServiceRegister(&api.AgentServiceRegistration{
 		ID:      uuid.NewString(),
 		Name:    "test",

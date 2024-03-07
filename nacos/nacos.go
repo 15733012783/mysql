@@ -33,7 +33,7 @@ func NaCosConfig(Group, DataId string, Port int) {
 	}
 	serverConfigs := []constant.ServerConfig{
 		{
-			IpAddr:      "127.0.0.1",
+			IpAddr:      "10.2.171.70",
 			ContextPath: "/nacos",
 			Port:        8848,
 			Scheme:      "http",
@@ -62,7 +62,7 @@ func NaCosConfig(Group, DataId string, Port int) {
 		},
 	)
 	success, err = namingClient.RegisterInstance(vo.RegisterInstanceParam{
-		Ip:          "127.0.0.1",
+		Ip:          "10.2.171.70",
 		Port:        8081,
 		ServiceName: "demo.go",
 		Weight:      10,
@@ -86,7 +86,7 @@ func NaocsServiceDiscovery(Group, DataId string) {
 	}
 	serverConfigs := []constant.ServerConfig{
 		{
-			IpAddr:      "127.0.0.1",
+			IpAddr:      "10.2.171.70",
 			ContextPath: "/nacos",
 			Port:        8848,
 			Scheme:      "http",
