@@ -10,11 +10,11 @@ import (
 	"strconv"
 )
 
-var ConSuLClient *api.Client
-
 func SonSul(Address string, Port int) {
 	var err error
-	ConsulCli, err := api.NewClient(api.DefaultConfig())
+	ConsulCli, err := api.NewClient(&api.Config{
+		Address: Address,
+	})
 	if err != nil {
 		return
 	}
@@ -45,7 +45,6 @@ func GetClient(serverName string) (*grpc.ClientConn, error) {
 		fmt.Printf("api.NewClient failed, err:%v\n", err)
 		return nil, err
 	}
-
 	serviceMap, date, err := cc.Agent().AgentHealthServiceByName(serverName)
 	if serviceMap != "passing" {
 		log.Println("获取consul服务发现失败！", err)
@@ -56,7 +55,6 @@ func GetClient(serverName string) (*grpc.ClientConn, error) {
 	for _, v := range date {
 		addr = v.Service.Address + ":" + strconv.Itoa(v.Service.Port)
 	}
-	fmt.Println(addr)
 	// 建立RPC连接
 	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(1024*1024*100)))
 	if err != nil {
