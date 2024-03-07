@@ -10,43 +10,33 @@ import (
 	"strconv"
 )
 
-func SonSul() {
-	ConSuLClient, err := api.NewClient(api.DefaultConfig())
+var ConSuLClient *api.Client
+
+func SonSul(Address string, Port int) {
+	var err error
+	ConsulCli, err := api.NewClient(api.DefaultConfig())
 	if err != nil {
 		return
 	}
-	api.DefaultConfig().Address = fmt.Sprintf("%s:%d", "10.2.171.70", 8500)
-	err = ConSuLClient.Agent().ServiceRegister(&api.AgentServiceRegistration{
-		ID:      uuid.NewString(),
-		Name:    "test",
-		Tags:    []string{"GRPC"},
-		Port:    8081,
-		Address: "10.2.171.70",
-	})
+	Srvid := uuid.New().String()
 	check := &api.AgentServiceCheck{
-		GRPC:     fmt.Sprintf("%s:%d", "10.2.171.70", 8081), // 这里一定是外部可以访问的地址
-		Timeout:  "10s",                                     // 超时时间
-		Interval: "10s",                                     // 运行检查的频率
-		// 指定时间后自动注销不健康的服务节点
-		// 最小超时时间为1分钟，收获不健康服务的进程每30秒运行一次，因此触发注销的时间可能略长于配置的超时时间。
-		DeregisterCriticalServiceAfter: "1m",
+		Interval:                       "5s",
+		Timeout:                        "5s",
+		GRPC:                           fmt.Sprintf("%s:%d", Address, Port),
+		DeregisterCriticalServiceAfter: "30s",
 	}
-	srv := &api.AgentServiceRegistration{
-		Name:    "test",                    // 服务名称
-		Tags:    []string{"q1mi", "hello"}, // 为服务打标签
-		Address: "10.2.171.70",
-		Port:    8081,
+	err = ConsulCli.Agent().ServiceRegister(&api.AgentServiceRegistration{
+		ID:      Srvid,
+		Name:    "user_srv",
+		Tags:    []string{"GRPC"},
+		Port:    Port,
+		Address: Address,
 		Check:   check,
-	}
+	})
 	if err != nil {
-		log.Println(err)
 		return
 	}
-	err = ConSuLClient.Agent().ServiceRegister(srv)
-	if err != nil {
-		log.Println(err)
-		return
-	}
+	return
 }
 
 func GetClient(serverName string) (*grpc.ClientConn, error) {
@@ -73,6 +63,5 @@ func GetClient(serverName string) (*grpc.ClientConn, error) {
 		log.Fatalf("grpc.Dial failed,err:%v", err)
 		return nil, err
 	}
-	fmt.Println(conn, "conn**************************************")
 	return conn, err
 }
