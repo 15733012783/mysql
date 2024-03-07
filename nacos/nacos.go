@@ -22,7 +22,7 @@ type T struct {
 var NaCosT T
 var success bool
 
-func NaCosConfig(Group, DataId string, Port int) {
+func createClientConfig() (constant.ClientConfig, []constant.ServerConfig) {
 	clientConfig := constant.ClientConfig{
 		NamespaceId:         "",
 		TimeoutMs:           5000,
@@ -39,6 +39,11 @@ func NaCosConfig(Group, DataId string, Port int) {
 			Scheme:      "http",
 		},
 	}
+	return clientConfig, serverConfigs
+}
+
+func NaCosConfig(Group, DataId string, Port int) {
+	clientConfig, serverConfigs := createClientConfig()
 	client, err := clients.CreateConfigClient(map[string]interface{}{
 		"serverConfigs": serverConfigs,
 		"clientConfig":  clientConfig,
@@ -76,38 +81,7 @@ func NaCosConfig(Group, DataId string, Port int) {
 }
 
 func NaocsServiceDiscovery(Group, DataId string) {
-	clientConfig := constant.ClientConfig{
-		NamespaceId:         "",
-		TimeoutMs:           5000,
-		NotLoadCacheAtStart: true,
-		LogDir:              "/tmp/nacos/log",
-		CacheDir:            "/tmp/nacos/cache",
-		LogLevel:            "debug",
-	}
-	serverConfigs := []constant.ServerConfig{
-		{
-			IpAddr:      "10.2.171.70",
-			ContextPath: "/nacos",
-			Port:        8848,
-			Scheme:      "http",
-		},
-	}
-	client, err := clients.CreateConfigClient(map[string]interface{}{
-		"serverConfigs": serverConfigs,
-		"clientConfig":  clientConfig,
-	})
-	if err != nil {
-		return
-	}
-	config, err3 := client.GetConfig(vo.ConfigParam{
-		DataId: DataId,
-		Group:  Group,
-	})
-	if err3 != nil {
-		return
-	}
-	json.Unmarshal([]byte(config), &NaCosT)
-	yaml.Unmarshal([]byte(config), &NaCosT)
+	clientConfig, serverConfigs := createClientConfig()
 	namingClient, err := clients.NewNamingClient(
 		vo.NacosClientParam{
 			ClientConfig:  &clientConfig,
