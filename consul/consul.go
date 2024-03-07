@@ -4,18 +4,14 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/hashicorp/consul/api"
-	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"strconv"
 )
 
-var ConSuLClient *api.Client
-
 func SonSul() {
-	var err error
-	ConSuLClient, err = api.NewClient(api.DefaultConfig())
+	ConSuLClient, err := api.NewClient(api.DefaultConfig())
 	if err != nil {
 		return
 	}
@@ -43,11 +39,12 @@ func SonSul() {
 		Check:   check,
 	}
 	if err != nil {
-		zap.S().Panic(err.Error())
+		log.Println(err)
+		return
 	}
 	err = ConSuLClient.Agent().ServiceRegister(srv)
 	if err != nil {
-		panic(err)
+		log.Println(err)
 		return
 	}
 }
