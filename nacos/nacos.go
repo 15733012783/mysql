@@ -68,7 +68,7 @@ func NaCosConfig(Group, DataId string, Port int) {
 	)
 	success, err = namingClient.RegisterInstance(vo.RegisterInstanceParam{
 		Ip:          "10.2.171.70",
-		Port:        8081,
+		Port:        8881,
 		ServiceName: "demo.go",
 		Weight:      10,
 		Enable:      true,

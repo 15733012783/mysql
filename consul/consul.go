@@ -39,8 +39,10 @@ func SonSul(Address string, Port int) {
 	return
 }
 
-func GetClient(serverName string) (*grpc.ClientConn, error) {
-	cc, err := api.NewClient(api.DefaultConfig())
+func GetClient(serverName, Address string) (*grpc.ClientConn, error) {
+	cc, err := api.NewClient(&api.Config{
+		Address: Address,
+	})
 	if err != nil {
 		fmt.Printf("api.NewClient failed, err:%v\n", err)
 		return nil, err
