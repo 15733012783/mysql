@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/hashicorp/consul/api"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"strconv"
 )
@@ -39,31 +37,23 @@ func SonSul(Address string, Port int, Add string) {
 	return
 }
 
-func GetClient(serverName, Address string) (*grpc.ClientConn, error) {
+func GetClient(serverName, Address string) (string, error) {
 	cc, err := api.NewClient(&api.Config{
 		Address: Address,
 	})
 	if err != nil {
 		fmt.Printf("api.NewClient failed, err:%v\n", err)
-		return nil, err
+		return "", err
 	}
 	serviceMap, date, err := cc.Agent().AgentHealthServiceByName(serverName)
 	if serviceMap != "passing" {
 		log.Println("获取consul服务发现失败！", err)
-		return nil, err
+		return "", err
 	}
 	// 选一个服务机（这里选最后一个）
 	var addr string
 	for _, v := range date {
 		addr = v.Service.Address + ":" + strconv.Itoa(v.Service.Port)
 	}
-	fmt.Println("addr**************************************")
-	fmt.Println(addr)
-	// 建立RPC连接
-	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		log.Fatalf("grpc.Dial failed,err:%v", err)
-		return nil, err
-	}
-	return conn, err
+	return addr, nil
 }
