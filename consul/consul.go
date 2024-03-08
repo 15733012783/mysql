@@ -57,6 +57,8 @@ func GetClient(serverName, Address string) (*grpc.ClientConn, error) {
 	for _, v := range date {
 		addr = v.Service.Address + ":" + strconv.Itoa(v.Service.Port)
 	}
+	fmt.Println("addr**************************************")
+	fmt.Println(addr)
 	// 建立RPC连接
 	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(1024*1024*100)))
 	if err != nil {

@@ -99,7 +99,7 @@ func NaocsServiceDiscovery(Group, DataId string) {
 		return
 	}
 	for i, v := range instances {
-		fmt.Println(i, v, "********************************")
+		fmt.Println(i, v, "nacos,********************************")
 	}
 }
 
