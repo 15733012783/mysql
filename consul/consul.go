@@ -60,7 +60,7 @@ func GetClient(serverName, Address string) (*grpc.ClientConn, error) {
 	fmt.Println("addr**************************************")
 	fmt.Println(addr)
 	// 建立RPC连接
-	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(1024*1024*100)))
+	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("grpc.Dial failed,err:%v", err)
 		return nil, err
