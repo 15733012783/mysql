@@ -10,10 +10,10 @@ import (
 	"strconv"
 )
 
-func SonSul(Address string, Port int) {
+func SonSul(Address string, Port int, Add string) {
 	var err error
 	ConsulCli, err := api.NewClient(&api.Config{
-		Address: Address,
+		Address: Add,
 	})
 	if err != nil {
 		return
