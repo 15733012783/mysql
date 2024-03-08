@@ -7,7 +7,6 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/clients/config_client"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/vo"
-	"gopkg.in/yaml.v2"
 	"log"
 )
 
@@ -21,16 +20,15 @@ type T struct {
 	} `json:"mysql"`
 	Grpc struct {
 		Address string `json:"Address"`
+		Host    string `json:"Host"`
 		Port    int    `json:"port"`
-		Addport string `json:"Addport"`
 	} `json:"grpc"`
 	Consul struct {
 		Name string `json:"name"`
-		Port int    `json:"port"`
 	} `json:"consul"`
 }
 
-var NaCosT T
+var GoodsT T
 var success bool
 
 func createClientConfig() (constant.ClientConfig, []constant.ServerConfig) {
@@ -69,8 +67,7 @@ func NaCosConfig(Group, DataId string, Port int) {
 	if err3 != nil {
 		return
 	}
-	json.Unmarshal([]byte(config), &NaCosT)
-	yaml.Unmarshal([]byte(config), &NaCosT)
+	json.Unmarshal([]byte(config), &GoodsT)
 	namingClient, err := clients.NewNamingClient(
 		vo.NacosClientParam{
 			ClientConfig:  &clientConfig,

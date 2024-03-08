@@ -8,10 +8,10 @@ import (
 	"strconv"
 )
 
-func SonSul(Address string, Port int, Add string) {
+func SonSul(Host string, Port int, Name string) {
 	var err error
 	ConsulCli, err := api.NewClient(&api.Config{
-		Address: Add,
+		Address: "10.2.171.70:8500",
 	})
 	if err != nil {
 		return
@@ -20,15 +20,15 @@ func SonSul(Address string, Port int, Add string) {
 	check := &api.AgentServiceCheck{
 		Interval:                       "5s",
 		Timeout:                        "5s",
-		GRPC:                           fmt.Sprintf("%s:%d", Address, Port),
+		GRPC:                           fmt.Sprintf("%s:%d", Host, Port),
 		DeregisterCriticalServiceAfter: "30s",
 	}
 	err = ConsulCli.Agent().ServiceRegister(&api.AgentServiceRegistration{
 		ID:      Srvid,
-		Name:    "user_srv",
+		Name:    Name,
 		Tags:    []string{"GRPC"},
 		Port:    Port,
-		Address: Address,
+		Address: Host,
 		Check:   check,
 	})
 	if err != nil {
@@ -55,5 +55,6 @@ func GetClient(serverName, Address string) (string, error) {
 	for _, v := range date {
 		addr = v.Service.Address + ":" + strconv.Itoa(v.Service.Port)
 	}
+	fmt.Println(addr, "addr*******************")
 	return addr, nil
 }
