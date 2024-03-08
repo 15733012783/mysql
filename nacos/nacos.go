@@ -12,11 +12,17 @@ import (
 )
 
 type T struct {
-	Username  string `json:"Username"  yaml:"Username"`
-	Password  string `json:"Password"  yaml:"Password"`
-	Host      string `json:"Host"      yaml:"Host"`
-	Port      string `json:"Port"      yaml:"Port"`
-	Mysqlbase string `json:"Mysqlbase" yaml:"Mysqlbase"`
+	Mysql struct {
+		Username  string `json:"Username"`
+		Password  string `json:"Password"`
+		Host      string `json:"Host"`
+		Port      string `json:"Port"`
+		Mysqlbase string `json:"Mysqlbase"`
+	} `json:"mysql"`
+	Grpc struct {
+		Address string `json:"Address"`
+		Port    int    `json:"port"`
+	} `json:"grpc"`
 }
 
 var NaCosT T

@@ -12,8 +12,8 @@ var db *gorm.DB
 var err error
 
 func InItMysql() {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", nacos.NaCosT.Username,
-		nacos.NaCosT.Password, nacos.NaCosT.Host, nacos.NaCosT.Port, nacos.NaCosT.Mysqlbase)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", nacos.NaCosT.Mysql.Username,
+		nacos.NaCosT.Mysql.Password, nacos.NaCosT.Mysql.Host, nacos.NaCosT.Mysql.Port, nacos.NaCosT.Mysql.Mysqlbase)
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	err := db.AutoMigrate(new(Goods))
 	if err != nil {
