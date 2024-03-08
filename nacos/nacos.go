@@ -22,10 +22,11 @@ type T struct {
 	Grpc struct {
 		Address string `json:"Address"`
 		Port    int    `json:"port"`
-		Add     string `json:"Add"`
+		Addport string `json:"Addport"`
 	} `json:"grpc"`
 	Consul struct {
 		Name string `json:"name"`
+		Port int    `json:"port"`
 	} `json:"consul"`
 }
 
