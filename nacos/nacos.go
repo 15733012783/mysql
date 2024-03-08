@@ -23,6 +23,9 @@ type T struct {
 		Address string `json:"Address"`
 		Port    int    `json:"port"`
 	} `json:"grpc"`
+	Consul struct {
+		Name string `json:"name"`
+	} `json:"consul"`
 }
 
 var NaCosT T
