@@ -2,6 +2,7 @@ package consul
 
 import (
 	"fmt"
+	"github.com/15733012783/mysql/nacos"
 	"github.com/google/uuid"
 	"github.com/hashicorp/consul/api"
 	"log"
@@ -10,8 +11,9 @@ import (
 
 func SonSul(Host string, Port int, Name string) {
 	var err error
+	sprintf := fmt.Sprintf("%v:%v", nacos.GoodsT.Grpc.Host, nacos.GoodsT.Grpc.Port)
 	ConsulCli, err := api.NewClient(&api.Config{
-		Address: "10.2.171.70:8500",
+		Address: sprintf,
 	})
 	if err != nil {
 		return
