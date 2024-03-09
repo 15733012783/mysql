@@ -25,6 +25,7 @@ type T struct {
 	} `json:"grpc"`
 	Consul struct {
 		Name string `json:"name"`
+		Host string `json:"Host"`
 	} `json:"consul"`
 }
 
