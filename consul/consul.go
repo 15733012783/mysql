@@ -11,7 +11,7 @@ import (
 
 func SonSul(Ghost string, Host string, Port int, Name string) {
 	var err error
-	sprintf := fmt.Sprintf("%v:%v", nacos.GoodsT.Grpc.Host, nacos.GoodsT.Grpc.Port)
+	sprintf := fmt.Sprintf("%v:%v", nacos.GoodsT.Grpc.Host, 8500)
 	ConsulCli, err := api.NewClient(&api.Config{
 		Address: sprintf,
 	})
