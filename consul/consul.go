@@ -16,6 +16,7 @@ func SonSul(Ghost string, Host string, Port int, Name string) {
 		Address: sprintf,
 	})
 	if err != nil {
+		log.Println(err, "服务注册失败")
 		return
 	}
 	Srvid := uuid.New().String()
@@ -34,6 +35,7 @@ func SonSul(Ghost string, Host string, Port int, Name string) {
 		Check:   check,
 	})
 	if err != nil {
+		log.Println(err, "服务注册失败")
 		return
 	}
 	return
@@ -49,7 +51,7 @@ func GetClient(serverName, Address string) (string, error) {
 	}
 	serviceMap, date, err := cc.Agent().AgentHealthServiceByName(serverName)
 	if serviceMap != "passing" {
-		log.Println("获取consul服务发现失败！", err)
+		log.Println("获取consul服务发现失败***！", err)
 		return "", err
 	}
 	// 选一个服务机（这里选最后一个）
