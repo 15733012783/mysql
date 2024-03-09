@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-func SonSul(Host string, Port int, Name string) {
+func SonSul(Ghost string, Host string, Port int, Name string) {
 	var err error
 	sprintf := fmt.Sprintf("%v:%v", nacos.GoodsT.Grpc.Host, nacos.GoodsT.Grpc.Port)
 	ConsulCli, err := api.NewClient(&api.Config{
@@ -22,7 +22,7 @@ func SonSul(Host string, Port int, Name string) {
 	check := &api.AgentServiceCheck{
 		Interval:                       "5s",
 		Timeout:                        "5s",
-		GRPC:                           fmt.Sprintf("%s:%d", Host, Port),
+		GRPC:                           fmt.Sprintf("%s:%d", Ghost, Port),
 		DeregisterCriticalServiceAfter: "30s",
 	}
 	err = ConsulCli.Agent().ServiceRegister(&api.AgentServiceRegistration{
