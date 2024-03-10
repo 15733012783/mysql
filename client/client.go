@@ -3,6 +3,7 @@ package client
 import (
 	"fmt"
 	"github.com/15733012783/mysql/consul"
+	_ "github.com/mbobakov/grpc-consul-resolver"
 	"google.golang.org/grpc"
 )
 
