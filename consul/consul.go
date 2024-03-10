@@ -1,6 +1,7 @@
 package consul
 
 import (
+	"errors"
 	"fmt"
 	"github.com/15733012783/mysql/nacos"
 	"github.com/google/uuid"
@@ -41,6 +42,8 @@ func SonSul(Ghost string, Host string, Port int, Name string) {
 	return
 }
 
+var currentIndex int
+
 func GetClient(serverName, Address string) (string, error) {
 	cc, err := api.NewClient(&api.Config{
 		Address: Address,
@@ -55,10 +58,15 @@ func GetClient(serverName, Address string) (string, error) {
 		return "", err
 	}
 	// 选一个服务机（这里选最后一个）
-	var addr string
-	for _, v := range date {
-		addr = v.Service.Address + ":" + strconv.Itoa(v.Service.Port)
+	if len(date) == 0 {
+		return "", errors.New("没有可用的服务")
 	}
+	// 获取当前要访问的服务的索引
+	currentIndex = (currentIndex + 1) % len(date)
+
+	// 获取当前要访问的服务地址
+	selectedService := date[currentIndex]
+	addr := selectedService.Service.Address + ":" + strconv.Itoa(selectedService.Service.Port)
 	fmt.Println(addr, "addr*******************")
 	return addr, nil
 }

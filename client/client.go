@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/15733012783/mysql/consul"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 func Client(serverName, Address string) (*grpc.ClientConn, error) {
@@ -13,5 +12,5 @@ func Client(serverName, Address string) (*grpc.ClientConn, error) {
 		return nil, err
 	}
 	fmt.Println(conn)
-	return grpc.Dial(conn, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	return grpc.Dial("consul://10.2.171.70:8500/"+serverName+"?wait=14s", grpc.WithInsecure(), grpc.WithDefaultServiceConfig(`{"LoadBalancingPolicy": "round_robin"}`))
 }
