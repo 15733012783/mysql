@@ -5,7 +5,7 @@ import (
 )
 
 // 商品表
-type CGoods struct {
+type Goods struct {
 	gorm.Model
 	GoodsName   string `gorm:"index"`             //商品名
 	Image       string `gorm:"type:text(0)"`      //头图
@@ -40,8 +40,8 @@ type Sku struct {
 	Stock       int64  `gorm:"index,type:int(6)"`  //库存
 }
 
-func NewCGoods() *CGoods {
-	return new(CGoods)
+func NewCGoods() *Goods {
+	return new(Goods)
 }
 
 func MewProperty() *Property {
@@ -56,26 +56,62 @@ func MewSku() *Sku {
 	return new(Sku)
 }
 
-func (g *CGoods) Create(goods *CGoods) (info *CGoods, err error) {
-	err = db.Model(g).Create(&goods).Error
-	info = goods
-	return info, err
+func (g *Goods) Create(goods *Goods) (info *Goods, err error) {
+	itMysql, err := inItMysql(func(db *gorm.DB) (interface{}, error) {
+		tx := db.Begin()
+		err = tx.Model(&Goods{}).Create(&goods).Error
+		if err != nil {
+			tx.Rollback()
+		}
+		info = goods
+		tx.Commit()
+		return info, err
+	})
+	inM := itMysql.(*Goods)
+	return inM, err
 }
 
 func (g *Property) Create(goods *Property) (info *Property, err error) {
-	err = db.Model(g).Create(&goods).Error
-	info = goods
-	return info, err
+	itMysql, err := inItMysql(func(db *gorm.DB) (interface{}, error) {
+		tx := db.Begin()
+		err = tx.Model(&Property{}).Create(&goods).Error
+		if err != nil {
+			tx.Rollback()
+		}
+		info = goods
+		tx.Commit()
+		return info, err
+	})
+	inM := itMysql.(*Property)
+	return inM, err
 }
 
 func (g *PropertyValue) Create(goods *PropertyValue) (info *PropertyValue, err error) {
-	err = db.Model(g).Create(&goods).Error
-	info = goods
-	return info, err
+	itMysql, err := inItMysql(func(db *gorm.DB) (interface{}, error) {
+		tx := db.Begin()
+		err = tx.Model(&PropertyValue{}).Create(&goods).Error
+		if err != nil {
+			tx.Rollback()
+		}
+		info = goods
+		tx.Commit()
+		return info, err
+	})
+	inM := itMysql.(*PropertyValue)
+	return inM, err
 }
 
 func (g *Sku) Create(goods *Sku) (info *Sku, err error) {
-	err = db.Model(g).Create(&goods).Error
-	info = goods
-	return info, err
+	itMysql, err := inItMysql(func(db *gorm.DB) (interface{}, error) {
+		tx := db.Begin()
+		err = db.Model(&Sku{}).Create(&goods).Error
+		if err != nil {
+			tx.Rollback()
+		}
+		info = goods
+		tx.Commit()
+		return info, err
+	})
+	inM := itMysql.(*Sku)
+	return inM, err
 }
