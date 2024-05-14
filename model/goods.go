@@ -1,7 +1,6 @@
 package model
 
 import (
-	"fmt"
 	"gorm.io/gorm"
 )
 
@@ -15,6 +14,12 @@ type CGoods struct {
 
 func NewGoods() *CGoods {
 	return new(CGoods)
+}
+
+func (g *CGoods) Where(id int) (info *CGoods, err error) {
+	info = new(CGoods)
+	err = db.Model(g).Where("id = ?", id).First(&info).Error
+	return info, err
 }
 
 func (g *CGoods) Create(goods *CGoods) (info *CGoods, err error) {
@@ -42,11 +47,7 @@ func (g *CGoods) Get(goodsName string) (info *CGoods, err error) {
 func (g *CGoods) UploadFile(id int, FileName string) (info *CGoods, err error) {
 	info = new(CGoods)
 	err = db.Model(g).Where("id = ?", id).First(info).Error
-	fmt.Println("**********************************************info")
-	fmt.Println(info)
 	info.GoodsPhoto = FileName
 	err = db.Model(g).Save(info).Error
-	fmt.Println("**********************************************info")
-	fmt.Println(info)
 	return info, err
 }

@@ -8,8 +8,9 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-// var db *gorm.DB
-// var err error
+var db *gorm.DB
+var err error
+
 func inItMysql(c func(db *gorm.DB) (interface{}, error)) (interface{}, error) {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		nacos.GoodsT.Mysql.Username,

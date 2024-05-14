@@ -70,3 +70,45 @@ func GetClient(serverName, Address string) (string, error) {
 	fmt.Println(addr, "addr*******************")
 	return addr, nil
 }
+
+// 服务过滤
+func RegisterConsul(ConsulHost string, ConsulPort int, Host string, Port int, Name string) {
+	sprintf := fmt.Sprintf("%v:%v", nacos.GoodsT.Grpc.Host, 8500)
+	client, err := api.NewClient(&api.Config{
+		Address: sprintf,
+	})
+	registration := api.AgentServiceRegistration{
+		ID:      uuid.New().String(),
+		Name:    Name,
+		Tags:    []string{"GRPC"},
+		Port:    Port,
+		Address: Host,
+		Check: &api.AgentServiceCheck{
+			Interval:                       "5s",
+			Timeout:                        "5s",
+			GRPC:                           fmt.Sprintf("%s:%d", Host, Port),
+			DeregisterCriticalServiceAfter: "30s",
+		},
+	}
+	result, err := client.Agent().ServicesWithFilter(fmt.Sprintf(`Service == "%s"`, Name))
+	if err != nil {
+		log.Panic("consul过滤服务失败", err)
+		return
+	}
+	var BaseSrvAddr string
+	for _, val := range result {
+		if val.Address == fmt.Sprintf("%s:%d", Host, Port) {
+			BaseSrvAddr = val.Address
+			log.Println("consul服务已存在")
+			break
+		}
+	}
+	if BaseSrvAddr == "" {
+		err = client.Agent().ServiceRegister(&registration)
+		if err != nil {
+			log.Fatal("consul注册服务失败", err)
+			return
+		}
+		log.Println("consul服务注册完成")
+	}
+}

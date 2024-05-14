@@ -22,7 +22,7 @@ type T struct {
 		Address string `json:"Address"`
 		Host    string `json:"Host"`
 		Port    int    `json:"port"`
-	} `json:"grpc"`
+	} `json:"service"`
 	Consul struct {
 		Name string `json:"name"`
 		Host string `json:"Host"`
@@ -49,6 +49,7 @@ func createClientConfig() (constant.ClientConfig, []constant.ServerConfig) {
 			Scheme:      "http",
 		},
 	}
+	fmt.Println(clientConfig, serverConfigs)
 	return clientConfig, serverConfigs
 }
 
@@ -97,6 +98,7 @@ func NaocsServiceDiscovery(Group, DataId string) {
 			ServerConfigs: serverConfigs,
 		},
 	)
+
 	// SelectAllInstance可以返回全部实例列表,包括healthy=false,enable=false,weight<=0
 	instances, err := namingClient.SelectAllInstances(vo.SelectAllInstancesParam{
 		ServiceName: "demo.go",

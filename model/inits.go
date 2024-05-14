@@ -8,16 +8,19 @@ import (
 	"log"
 )
 
-var db *gorm.DB
-var err error
-
 func InItMysql() {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", nacos.GoodsT.Mysql.Username,
-		nacos.GoodsT.Mysql.Password, nacos.GoodsT.Mysql.Host, nacos.GoodsT.Mysql.Port, nacos.GoodsT.Mysql.Mysqlbase)
+	var db *gorm.DB
+	var err error
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		nacos.GoodsT.Mysql.Username,
+		nacos.GoodsT.Mysql.Password,
+		nacos.GoodsT.Mysql.Host,
+		nacos.GoodsT.Mysql.Port,
+		nacos.GoodsT.Mysql.Mysqlbase)
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	err := db.AutoMigrate(new(CGoods))
+	err = db.AutoMigrate(new(CGoods))
 	if err != nil {
-		log.Println(err, "**********************AutoMigrate")
+		log.Println(err)
 		return
 	}
 }

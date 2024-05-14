@@ -71,6 +71,19 @@ func (g *Goods) Create(goods *Goods) (info *Goods, err error) {
 	return inM, err
 }
 
+func (g *Goods) Delete(id int) error {
+	_, err2 := inItMysql(func(db *gorm.DB) (interface{}, error) {
+		tx := db.Begin()
+		err = tx.Model(&Goods{}).Delete("id = ?", id).Error
+		if err != nil {
+			tx.Rollback()
+		}
+		tx.Commit()
+		return nil, err
+	})
+	return err2
+}
+
 func (g *Property) Create(goods *Property) (info *Property, err error) {
 	itMysql, err := inItMysql(func(db *gorm.DB) (interface{}, error) {
 		tx := db.Begin()
@@ -109,13 +122,27 @@ func (g *Property) WhereID(name string) (info *Property, err error) {
 	return inM, err
 }
 
-func (g *Property) Where(ID int) (info *Property, err error) {
+func (g *Property) Where(ID int) (info []*Property, err error) {
 	itMysql, err := inItMysql(func(db *gorm.DB) (interface{}, error) {
-		err = db.Model(&Property{}).Where("goods_id = ?", ID).First(&info).Error
-		return info, err
+		var property []*Property
+		err = db.Model(&Property{}).Where("goods_id = ?", ID).Find(&property).Error
+		return property, err
 	})
-	inM := itMysql.(*Property)
+	inM := itMysql.([]*Property)
 	return inM, err
+}
+
+func (g *Property) Delete(id int) error {
+	_, err2 := inItMysql(func(db *gorm.DB) (interface{}, error) {
+		tx := db.Begin()
+		err = tx.Model(&Property{}).Delete("id = ?", id).Error
+		if err != nil {
+			tx.Rollback()
+		}
+		tx.Commit()
+		return nil, err
+	})
+	return err2
 }
 
 func (g *PropertyValue) Create(goods *PropertyValue) (info *PropertyValue, err error) {
@@ -133,9 +160,9 @@ func (g *PropertyValue) Create(goods *PropertyValue) (info *PropertyValue, err e
 	return inM, err
 }
 
-func (g *PropertyValue) WhereID(value string) (info *PropertyValue, err error) {
+func (g *PropertyValue) WhereID(id int) (info *PropertyValue, err error) {
 	itMysql, err := inItMysql(func(db *gorm.DB) (interface{}, error) {
-		err = db.Model(&PropertyValue{}).Where("value = ?", value).First(&info).Error
+		err = db.Model(&PropertyValue{}).Where("property_id = ?", id).First(&info).Error
 		return info, err
 	})
 	inM := itMysql.(*PropertyValue)
@@ -150,6 +177,19 @@ func (g *PropertyValue) Where(ID int) (info []*PropertyValue, err error) {
 	})
 	inM := itMysql.([]*PropertyValue)
 	return inM, err
+}
+
+func (g *PropertyValue) Delete(id int) error {
+	_, err2 := inItMysql(func(db *gorm.DB) (interface{}, error) {
+		tx := db.Begin()
+		err = tx.Model(&PropertyValue{}).Delete("id = ?", id).Error
+		if err != nil {
+			tx.Rollback()
+		}
+		tx.Commit()
+		return nil, err
+	})
+	return err2
 }
 
 func (g *Sku) Create(goods *Sku) (info *Sku, err error) {
@@ -175,4 +215,17 @@ func (g *Sku) Where(ID int) (info []*Sku, err error) {
 	})
 	inM := itMysql.([]*Sku)
 	return inM, err
+}
+
+func (g *Sku) Delete(id int) error {
+	_, err2 := inItMysql(func(db *gorm.DB) (interface{}, error) {
+		tx := db.Begin()
+		err = tx.Model(&Sku{}).Delete("id = ?", id).Error
+		if err != nil {
+			tx.Rollback()
+		}
+		tx.Commit()
+		return nil, err
+	})
+	return err2
 }

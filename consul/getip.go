@@ -14,7 +14,6 @@ func GetIp() (ip []string) {
 				ip = append(ip, ipNet.IP.String())
 			}
 		}
-
 	}
 	return ip
 }
